@@ -1,0 +1,638 @@
+openapi: 3.0.1
+info:
+  title: CMDB API
+  description: This application provides access, through a web interface, to some of the features provided by the [IMDB] website.
+  contact:
+    email: A49751@alunos.isel.pt
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+
+servers:
+  - description: Localhost server for testing API
+    url: http://localhost:8080
+
+tags :
+  - name: topMovies
+    externalDocs:
+      description: Based on
+      url: https://imdb-api.com/
+  - name: SearchMovie
+    externalDocs:
+      description: Based on
+      url: https://imdb-api.com/
+  - name: groups
+    description: Favorite movie groups
+  - name: user
+
+paths:
+  /topMovies:
+    get:
+      tags:
+      - topMovies
+      summary: get most popular movies
+      description: By passing in the number of movies, you get the x most popular movies
+      operationId: getTopMovies
+      parameters:
+      - in: query
+        name: limit
+        description: maximum number of popular movies to return
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 250
+      responses:
+        200:
+          description: Most popular movies found
+          content:
+            application/json:
+              schema:
+                required:
+                  - status
+                  - movies
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  movies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/topMovies'
+        400:
+          description: Invalid max number of movies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'
+        502:
+          description: IMDb API is not responding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequest'
+  /searchMovie/{movieName}:
+    get:
+      tags:
+      - searchMovie
+      summary: get movies by name
+      description: By passing in a name, you get the movies that have that name
+      operationId: getSearchMovie
+      parameters:
+      - name: movieName
+        in: path
+        description: name of the movie to be searched
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: limit
+        description: maximum number of movies to return
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 250
+      responses:
+        200:
+          description: Movies found
+          content:
+            application/json:
+              schema:
+                required:
+                  - status
+                  - movies
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  movies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Movie'
+        400:
+          description: Invalid max number of movies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'
+        404:
+          description: No movies found for the name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'        
+        502:
+          description: IMDb API is not responding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'    
+  /groups:
+    get:
+      tags:
+      - groups
+      summary: get all groups
+      description: list of all groups
+      operationId: allGroups
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid  
+      responses:
+        200:
+          description: all groups found
+          content:
+            application/json:
+              schema:
+                required:
+                  - status
+                  - groups
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  groups:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AllGroups'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'                    
+    post:
+      tags:
+      - groups
+      summary: create group
+      description: create a group with a provided name and description
+      operationId: createGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid  
+      requestBody:
+        description: Group to create
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string  
+      responses:
+        201:
+          description: Group created
+          content: 
+            application/json:
+              schema:
+                required:
+                  - status
+                  - group
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  group:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/Group'
+        400:
+          description: Invalid input, object invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'  
+        401:
+          $ref: '#/components/responses/UnauthorizedError'      
+  /groups/{groupId}:
+    delete:
+      tags:
+      - groups
+      summary: delete group
+      description: Delete the group with the id given
+      operationId: deleteGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid  
+      - name: groupId
+        in: path
+        description: id of the group to delete
+        required: true
+        schema:
+          type: string  
+      responses:
+        200:
+          description: Group deleted
+          content: 
+            application/json:
+              schema:
+                required:
+                  - status
+                  - group
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  group:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/Group'  
+        404:
+          description: Group not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'        
+        401:
+          $ref: '#/components/responses/UnauthorizedError'                  
+    put:
+      tags:
+      - groups
+      summary: edit group
+      description: Edit the name and description of a group
+      operationId: editGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        description: id of the group to get details
+        required: true
+        schema:
+          type: string      
+      requestBody:
+        description: New name and description of the group
+        required: true
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string     
+      responses:
+        201:
+          description: group edited
+          content:
+            application/json:
+              schema:
+                required:
+                  - status
+                  - group
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  group:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/Group'
+        404:
+          description: Group not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'        
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    get:
+      tags:
+      - groups
+      summary: get a group
+      description: Get details of the group with that id
+      operationId: detailsGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid  
+      - name: groupId
+        in: path
+        description: id of the group to get details
+        required: true
+        schema:
+          type: string     
+      responses:
+        200:
+          description: group found
+          content: 
+            application/json:
+              schema:
+                required:
+                  - status
+                  - group
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  group:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/Group'
+        404:
+          description: Group not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'         
+        401:
+          $ref: '#/components/responses/UnauthorizedError'      
+    post:
+      tags:
+      - groups
+      summary: add movie to group
+      description: Add a movie to a group
+      operationId: addMovie
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        description: id of the group to add movie to
+        required: true
+        schema:
+          type: string  
+      requestBody:
+        description: Movie to add
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - movieId
+              type: object
+              properties:
+                movieId:
+                  type: string  
+      responses:
+        201:
+          description: Movie added
+          content: 
+            application/json:
+              schema:
+                required:
+                  - status
+                  - group
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  group:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/Group'
+        400:
+          description: Invalid group name or movie id 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest' 
+        404:
+          description: Group not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'           
+        401:
+          $ref: '#/components/responses/UnauthorizedError'  
+  /groups/{groupId}/{movieId}:          
+    delete:
+      tags:
+      - groups
+      summary: remove movie from group
+      description: Removes a movie from a group
+      operationId: removeMovie
+      security:
+        - bearerAuth: []  
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        description: id of the group with the movie to delete
+        required: true
+        schema:
+          type: string      
+      - name: movieId
+        in: path
+        description: id of movie to remove
+        required: true
+        schema:
+          required:
+            - movieId
+          type: object
+          properties:
+            movieId:
+              type: string
+      responses:
+        200:
+          description: Movie deleted 
+          content: 
+            application/json:
+              schema:
+                required:
+                  - status
+                  - group
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  group:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/Group'
+        400:
+          description: Invalid group name or movie id 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest' 
+        404:
+          description: Movie or Group not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'   
+  /user:
+    post:
+      tags:   
+      - user    
+      summary: create new user
+      description: Create a new user
+      operationId: createUser
+      requestBody:
+        description: User to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+        required: true
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                required:
+                  - status
+                  - user
+                type: object
+                properties:
+                  status:
+                    type: string 
+                  user:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/User'
+        400:
+          description: Invalid username
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/InvalidRequest'            
+components:
+  securitySchemes:
+    bearerAuth:           
+      type: http
+      scheme: bearer
+  schemas:
+    topMovies:
+      required:
+        - id
+        - rank
+        - title
+        - year 
+        - imDbRating
+      type: object
+      properties:
+        id:
+          type: string 
+        rank:
+          type: string
+        title:
+          type: string
+        year:
+          type: string
+        imDbRating:
+          type: string
+    Movie:
+      required:
+        - id
+        - title
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+    MovieGroup:
+      required:
+        - id
+        - title
+        - year
+        - durationMins
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string     
+        year:
+          type: string
+        durationMins:
+          type: string    
+    Group:
+      required:
+        - userId
+        - groupId
+        - name
+        - description
+      type: object
+      properties:
+        userId:
+          type: string 
+        groupId:  
+          type: string 
+        name:
+          type: string
+        description:
+          type: string
+        movies:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieGroup'
+    AllGroups:
+      required:
+        - groupId
+        - name
+        - description
+        - nºmovies
+      type: object
+      properties:
+        groupId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        nºmovies:
+          type: string
+    NewUser:
+      required:
+        - userName
+      type: object
+      properties:
+        userName:
+          type: string  
+    User:
+      required:
+        - id
+        - userName
+        - token
+      type: object
+      properties:
+        id:
+          type: string
+        userName:
+          type: string
+        token:
+          type: string
+          format: uuid                
+  responses:
+    UnauthorizedError:
+      description: User token is missing or invalid    
+    InvalidRequest:     
+      description: Parameter is missing or invalid                             
