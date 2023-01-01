@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg bg-dark">
+  <div class="container-fluid">
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link text-white
+          {{#if home}}
+            active disabled" 
+          {{/if}}
+          " aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white
+          {{#if searchTop}}
+            active disabled" 
+          {{/if}}
+          " href="/searchTopMovies">Top Movies</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white
+          {{#if search}}
+            active disabled" 
+          {{/if}}
+          " href="/search">Search Movie</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white
+          {{#if groups}}
+            active disabled" 
+          {{/if}}
+          aria-current="page" href="/groups">Groups</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white
+          {{#if createGroup}}
+            active disabled" 
+          {{/if}}
+          " href="/groups/create">CreateGroup</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

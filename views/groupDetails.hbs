@@ -1,0 +1,22 @@
+{{#if gD}}
+<div class="row">
+  <div class="col">
+    <h3>{{gD.group.name}}</h3>
+    <p>{{gD.group.description}}</p>
+    <p>Movies:</p>
+    {{#each gD.group.movies}}
+    <a href="/{{this.id}}">
+    {{this.title}}
+    </a>
+    <form action='/groups/{{../gD.group.groupId}}/{{this.id}}' method='POST'>
+      <input type='hidden' name='movieId' value='{{this.id}}'>
+      <input type='hidden' name='groupId' value='{{../gD.group.groupId}}'>
+			<button type="submit" class="btn btn-danger"><span class="bi bi-trash3-fill"></span></button>
+		</form>
+    <p></p>
+    {{/each}}
+    <p></p>
+    <p>Movies total duration: {{gD.moviesTotalDuration}}</p>
+   </div> 
+</div>
+{{/if}}

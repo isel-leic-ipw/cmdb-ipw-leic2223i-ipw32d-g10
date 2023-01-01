@@ -1,0 +1,43 @@
+{{#if movies}}
+{{#each m}}
+
+<div class="row">
+  <div class="col">
+	<a href="/{{this.id}}">
+    <h3>{{this.title}}</h3>
+	</a>
+    <p>id: {{this.id}}</p>
+   </div> 
+</div>
+
+<form action='/add/{{this.id}}' method='GET'>
+			<input type='hidden' name='movieId' value='{{this.id}}'>
+			<button type="submit" class="btn btn-primary"><span class="bi bi-bookmark-star-fill"></span></button>	
+		</form>
+<p></p>
+{{/each}}
+{{/if}}
+
+
+{{#if topMovies}}
+{{#each topM}}
+
+<div class="row">
+  <div class="col">
+    <a href="/{{this.id}}">
+    <h3>{{this.title}}</h3>
+    </a>
+    <p>id: {{this.id}}</p>
+    <p>rank: {{this.rank}}</p>
+    <p>year: {{this.year}}</p>
+    <p>imDbRating: {{this.imDbRating}}</p>
+   </div> 
+</div>
+<form action='/add/{{this.id}}' method='GET'>
+			<input type='hidden' name='movieId' value='{{this.id}}'>
+			<button type="submit" class="btn btn-primary"><span class="bi bi-bookmark-star-fill"></span></button>	
+		</form>
+
+<p></p>
+{{/each}}
+{{/if}}

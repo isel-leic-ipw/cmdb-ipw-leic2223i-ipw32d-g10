@@ -2,16 +2,16 @@ import toHttpResponse from './errors/cmdb-http-errors.mjs'
 
 export default function (cmdbServices) {
     return {
-        getTopMovies: getTopMovies,
-        getMovie: getMovie,
-        createUser: createUser,
-        getAllGroups: verifyAuthentication(getAllGroupsInternal),
-        createGroup: verifyAuthentication(createGroupInternal),
-        deleteGroup: verifyAuthentication(deleteGroupInternal),
-        getGroupDetails: verifyAuthentication(getGroupDetailsInternal),
-        editGroup: verifyAuthentication(editGroupInternal),
-        addMovie: verifyAuthentication(addMovieInternal),
-        removeMovie: verifyAuthentication(removeMovieInternal)
+    getTopMovies: getTopMovies,
+    getMovie: getMovie,
+    createUser: createUser,
+    getAllGroups: verifyAuthentication(getAllGroupsInternal),
+    createGroup: verifyAuthentication(createGroupInternal),
+    deleteGroup: verifyAuthentication(deleteGroupInternal),
+    getGroupDetails: verifyAuthentication(getGroupDetailsInternal),
+    editGroup: verifyAuthentication(editGroupInternal),
+    addMovie: verifyAuthentication(addMovieInternal),
+    removeMovie: verifyAuthentication(removeMovieInternal)
     }
 
 async function getTopMovies(req, rsp){
@@ -85,7 +85,7 @@ async function createGroupInternal(req, rsp) {
         rsp
             .status(201)
             .json({
-                status: `Group with name ${newGroup.name} created with success`,
+                status: `Group with name ${req.body.name} created with success`,
                 group: newGroup
                 })
             
@@ -181,9 +181,9 @@ async function removeMovieInternal(req, rsp) {
         }
 }
 
-
 function verifyAuthentication(handlerFunction) {
     return function(req, rsp) {
+        //let userToken = '0b115b6e-8fcd-4b66-ac26-33392dcb9340'
         let userToken = req.get("Authorization")
         userToken = userToken ? userToken.split(" ")[1] : null
         if(!userToken) {
@@ -194,5 +194,5 @@ function verifyAuthentication(handlerFunction) {
         req.token = userToken 
         handlerFunction(req, rsp)
     }
-}  
+}
 }

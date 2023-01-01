@@ -1,6 +1,6 @@
 import errors from './errors/cmdb-errors.mjs'
 
-export default function(groupsData, moviesData) {
+export default function(groupsData, moviesData, mode) {
     if (!groupsData) {
         throw errors.INVALID_PARAMETER('groupsData')
     }
@@ -17,7 +17,8 @@ export default function(groupsData, moviesData) {
         editGroup: editGroup,
         getGroupDetails: getGroupDetails,
         addMovie: addMovie,
-        removeMovie: removeMovie
+        removeMovie: removeMovie,
+        movieDetails: movieDetails
     }
 
 async function getTopMovies(limit) {
@@ -40,16 +41,16 @@ async function createUser(userName){
     if (checkUndefined(userName)) {
         throw errors.INVALID_PARAMETER(`userName`)
     }
-    return groupsData.createUser(userName)
+    return groupsData.createUser(userName, mode)
 }
 
 
 async function getAllGroups(userToken){
-    const user = await groupsData.getUser(userToken)
+    const user = await groupsData.getUser(userToken, mode)
     if(!user) {
         throw errors.USER_NOT_FOUND()
     }
-    return groupsData.getAllGroups(user.id)
+    return groupsData.getAllGroups(user.id, mode)
 }
 
 
@@ -59,54 +60,51 @@ async function createGroup(userToken, body){
     if (checkUndefined(name) || checkUndefined(description)){
         throw errors.INVALID_PARAMETER(`name or description`)
     }
-    const user = await groupsData.getUser(userToken)
+    const user = await groupsData.getUser(userToken, mode)
     if(!user) {
         throw errors.USER_NOT_FOUND()
     }
-    return groupsData.createGroup(user.id, name, description)
+    return groupsData.createGroup(user.id, name, description, mode)
 }
 
 
 async function deleteGroup(userToken, groupToDelete){ 
-    checkGroupId(groupToDelete)
-    const user = await groupsData.getUser(userToken)
+    const user = await groupsData.getUser(userToken, mode)
     if(!user) {
         throw errors.USER_NOT_FOUND()
     }
-    const group = await groupsData.getGroup(groupToDelete, user.id)
+    const group = await groupsData.getGroup(groupToDelete, mode)
     if(!group) {
         throw errors.GROUP_NOT_FOUND(`${groupToDelete}`)
     }
-    return groupsData.deleteGroup(group)
+    return groupsData.deleteGroup(group, mode)
 }
 
 
 async function editGroup(userToken, groupToEdit, body){
     const name = body.name
     const description = body.description
-    checkGroupId(groupToEdit)
     if (checkUndefined(name) || checkUndefined(description)){
         throw errors.INVALID_PARAMETER(`name or description`)
     }
-    const user = await groupsData.getUser(userToken)
+    const user = await groupsData.getUser(userToken, mode)
     if(!user) {
         throw errors.USER_NOT_FOUND()
     }
-    const group = await groupsData.getGroup(groupToEdit, user.id)
+    const group = await groupsData.getGroup(groupToEdit, mode)
     if(!group) {
         throw errors.GROUP_NOT_FOUND(`${groupToEdit}`)
     }
-    return groupsData.editGroup(group, name, description)
+    return groupsData.editGroup(name, description,group, mode)
 }
 
 
 async function getGroupDetails(userToken, groupToGet){
-    checkGroupId(groupToGet)
-    const user = await groupsData.getUser(userToken)
+    const user = await groupsData.getUser(userToken, mode)
     if(!user) {
         throw errors.USER_NOT_FOUND()
     }
-    const group = await groupsData.getGroup(groupToGet, user.id)
+    const group = await groupsData.getGroup(groupToGet, mode)
     if(!group) {
         throw errors.GROUP_NOT_FOUND(`${groupToGet}`)
     }
@@ -116,12 +114,11 @@ async function getGroupDetails(userToken, groupToGet){
 
 
 async function addMovie(userToken, groupToAdd, movieId){
-    checkGroupId(groupToAdd)
-    const user = await groupsData.getUser(userToken)
+    const user = await groupsData.getUser(userToken, mode)
     if(!user) {
         throw errors.USER_NOT_FOUND()
     }
-    const group = await groupsData.getGroup(groupToAdd, user.id)
+    const group = await groupsData.getGroup(groupToAdd, mode)
     if(!group) {
         throw errors.GROUP_NOT_FOUND(`${groupToAdd}`)
     }
@@ -129,7 +126,7 @@ async function addMovie(userToken, groupToAdd, movieId){
     if(movie.id === null) {
         throw errors.MOVIE_NOT_FOUND(`id`,`${movieId}`)
     }
-    const result = await groupsData.addMovie(group, movie)
+    const result = await groupsData.addMovie(group, movie, mode)
     if(result == false){
         throw errors.INVALID_PARAMETER(`movieId or groupId, the movie already exists in the group`)
     }
@@ -138,16 +135,15 @@ async function addMovie(userToken, groupToAdd, movieId){
 
 
 async function removeMovie(userToken, groupRemove, movieId){
-    checkGroupId(groupRemove)
-    const user = await groupsData.getUser(userToken)
+    const user = await groupsData.getUser(userToken, mode)
     if(!user) {
         throw errors.USER_NOT_FOUND()
     }
-    const group = await groupsData.getGroup(groupRemove, user.id)
+    const group = await groupsData.getGroup(groupRemove, mode)
     if(!group) {
         throw errors.GROUP_NOT_FOUND(`${groupRemove}`)
     }
-    const result = await groupsData.removeMovie(group, movieId)
+    const result = await groupsData.removeMovie(group, movieId, groupRemove, mode)
     if(result == false){
         throw errors.INVALID_PARAMETER(`movieId or groupId, the movie was not found in the group`)
     }
@@ -155,15 +151,15 @@ async function removeMovie(userToken, groupRemove, movieId){
 }
 
 
+async function movieDetails(movieId){
+    const movieDetails = await moviesData.getMovieDetails(movieId)
+    return movieDetails
+}
+
+
 function checkLimit(limit) {
     if ((limit > 250 || limit < 0 || isNaN(limit))){
         throw errors.INVALID_PARAMETER(`limit`)
-    }
-}
-
-function checkGroupId(id) {
-    if(isNaN(id)){
-        throw errors.INVALID_PARAMETER(`groupId`)
     }
 }
 

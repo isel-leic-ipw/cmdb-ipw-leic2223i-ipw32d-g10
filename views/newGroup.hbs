@@ -1,0 +1,26 @@
+{{#if createGroup}}
+<form method="POST" action="/groups">
+<p></p>
+    <div>
+        Group Name: <input type="text" name="name"/>
+    </div>
+    <p></p>
+    <div>
+        Group Description: <input type="text" name="description"/>
+    </div>
+    <button type="submit" class="btn btn-dark">Create</button>	
+</form>
+{{/if}}
+
+
+{{#if editGroup}}
+<form method="POST" action="/groups/{{id}}/update">
+    <div>
+        Group Name: <input type="text" name="name"/>
+    </div>
+    <div>
+        Group Description: <input type="text" name="description"/>
+    </div>
+    <button type="submit" class="btn btn-dark">Edit</button>	
+</form>
+{{/if}}

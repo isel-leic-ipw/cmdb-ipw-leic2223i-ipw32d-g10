@@ -1,0 +1,20 @@
+{{#if details}}
+<div class="row">
+  <div class="col">
+    <h3>{{details.title}}</h3>
+    <p>id: {{details.id}}</p>
+    <p>description: {{details.description}}</p>
+    <p>image_url:</p>
+    <a href="{{details.image}}">
+    <img src="{{details.image}}" alt="Url of the movie image" width="250" height="350">
+    </a>
+    <p></p>
+    <p>durationMins: {{details.durationMins}}</p>
+    <p>director: {{details.director}}</p>
+    actors:
+    {{#each details.actors}}
+    {{this.name}},
+    {{/each}}
+   </div> 
+</div>
+{{/if}}

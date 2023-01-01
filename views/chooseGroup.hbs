@@ -1,0 +1,22 @@
+{{#each chooseG}}
+    <table>
+		<tr>
+			<td>Title:</td>
+			<td>{{this.name}}</td>
+		</tr>
+    <tr>
+			<td>Description:</td>
+			<td>{{this.description}}</td>
+		</tr>
+		<tr>
+			<td>Nº of movies:</td>
+			<td>{{this.nºmovies}}</td>
+		</tr>
+    </table>
+    <form action='/add/{{../movie}}/{{this.groupId}}' method='POST'>
+			<input type='hidden' name='groupId' value='{{this.groupId}}'>
+            <input type='hidden' name='movieId' value='{{../movie}}'>
+			<input type='submit' value='Choose group'>
+		</form>
+    <p></p>     
+{{/each}}

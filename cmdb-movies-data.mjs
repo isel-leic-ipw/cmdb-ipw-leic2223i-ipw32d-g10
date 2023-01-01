@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-const key = 'k_8rhp1n3b' 
+const key = 'k_5no5u2un' 
 const baseURL = 'https://imdb-api.com/en/API/' 
 
 export function getTopMovies(limit){
@@ -72,6 +72,27 @@ function processGetMovieById(obj){
         title: obj.title,
         year: obj.year,
         durationMins: +(obj.runtimeMins)
+    }
+    return result
+}
+
+export function getMovieDetails(movieId){
+    return fetch(baseURL + `Title/${key}/${movieId}`, {
+        headers : {"Accept" : "application/json"}
+    })
+    .then (response => response.json())
+    .then(res => processGetMovieDetails(res))
+}    
+
+function processGetMovieDetails(obj){
+    const result = {
+        id: obj.id,
+        title: obj.title,
+        description: obj.plot,
+        image: obj.image,
+        durationMins: +(obj.runtimeMins),
+        director: obj.directors,
+        actors: obj.actorList
     }
     return result
 }

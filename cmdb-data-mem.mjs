@@ -1,17 +1,17 @@
 import { randomUUID } from 'crypto'
 
-let users = []
-let groups = []
-let userId = 1
-let groupId = 1
+const users = [{id: 1, username: 'buser1', token: '0b115b6e-8fcd-4b66-ac26-33392dcb9340'}]
+const groups = [{userId: 1, groupId: 1, name: 'group1', description: 'group 1 description', movies: [
+    {id: 'tt0111161', title: 'The Shawshank Redemption', year: '1994', durationMins: 120}, 
+    {id: 'tt0468569', title: 'The Dark Knight', year: '2008', durationMins: 160}]},
+{userId: 1, groupId: 2, name: 'group2', description: 'group 2 description', movies: []},
+{userId: 1, groupId: 3, name: 'group3', description: 'group 3 description', movies: []}]
+
+let userId = users.length + 1
+let groupId = groups.length + 1
 
 export async function createUser(userName){
     let userToken = randomUUID()
-    users.forEach(e => {
-        if(userToken == e.token){
-            userToken = randomUUID()
-        }
-    })
     const user = {
         id: userId,
         userName: userName,
@@ -58,13 +58,14 @@ export async function createGroup(userId, name, description){
 
 export async function deleteGroup(group){
     const index = groups.indexOf(group)
+    const deletedGroup = groups[index]
     if (index > -1) {
         groups.splice(index, 1) 
       }
-    return group  
+    return deletedGroup
 }
 
-export async function editGroup(groupToEdit, name, description){
+export async function editGroup(name, description,groupToEdit){
     groupToEdit.name = name
     groupToEdit.description = description
     return groupToEdit
@@ -116,10 +117,12 @@ export async function removeMovie(group, movieId) {
     }
 }
 
+//Auxiliary functions
 export async function getUser(userToken) {
     return users.find(user => user.token == userToken)
 }
 
-export async function getGroup(groupId, userId) {
-    return groups.find(group => group.groupId == groupId && group.userId == userId)
+export async function getGroup(groupId) {
+    //return groups.find(group => group.groupId == groupId && group.userId == userId)
+    return groups.find(group => group.groupId == groupId)
 }

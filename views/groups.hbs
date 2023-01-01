@@ -1,0 +1,33 @@
+{{#each g}}
+<table>
+		<tr>
+			<td>Title:</td>
+			<td>{{this.name}}</td>
+		</tr>
+    <tr>
+			<td>Description:</td>
+			<td>{{this.description}}</td>
+		</tr>
+		<tr>
+			<td>Nº of movies:</td>
+			<td>{{this.nºmovies}}</td>
+		</tr>
+</table>
+<div style="display: flex;">
+	<form action='/groups/{{this.groupId}}/delete' method='POST'>
+			<input type='hidden' name='groupId' value='{{this.groupId}}'>
+			<button type="submit" class="btn btn-danger"><span class="bi bi-trash3-fill"></span></button>	
+	</form>
+
+	<form action='/groups/{{this.groupId}}' method='GET'>
+			<input type='hidden' name='groupId' value='{{this.groupId}}'>
+			<button type="submit" class="btn btn-primary"><span class="bi bi-info-circle-fill"></span></button>
+	</form>
+
+	<form action='/groups/{{this.groupId}}/edit' method='GET'>
+			<input type='hidden' name='groupId' value='{{this.groupId}}'>
+			<button type="submit" class="btn btn-success"><span class="bi bi-pencil-fill"></span></button>	
+	</form>	
+</div>
+<p></p>		
+{{/each}}

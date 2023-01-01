@@ -1,0 +1,25 @@
+
+{{#if search}}
+<p></p>
+<h1>Find movies</h1>
+<p></p>
+<form action="/searchMovie" method="GET">
+	<label for="txtQuery1">Movie Name:</label>
+	<input type="text" id="txtQuery1" name="movie">
+	<label for="txtQuery2">Limit:</label>
+	<input type="text" id="txtQuery2" name="q">
+	<button type="submit" class="btn btn-dark"><span class="bi bi-search"></span> Search</button>	
+</form>
+{{/if}}
+
+
+{{#if searchTop}}
+<p></p>
+<h1>Find top movies</h1>
+<p></p>
+<form action="/topMovies" method="GET">
+	<label for="txtQuery">Limit:</label>
+	<input type="text" id="txtQuery" name="limit">
+	<button type="submit" class="btn btn-dark"><span class="bi bi-search"></span> Search</button>
+</form>
+{{/if}}

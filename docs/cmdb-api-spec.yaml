@@ -71,7 +71,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InvalidRequest'
-  /searchMovie/{movieName}:
+  /searchMovie:
     get:
       tags:
       - searchMovie
@@ -79,8 +79,8 @@ paths:
       description: By passing in a name, you get the movies that have that name
       operationId: getSearchMovie
       parameters:
-      - name: movieName
-        in: path
+      - in: query
+        name: movieName
         description: name of the movie to be searched
         required: true
         schema:
@@ -573,7 +573,7 @@ components:
         year:
           type: string
         durationMins:
-          type: string    
+          type: integer    
     Group:
       required:
         - userId
