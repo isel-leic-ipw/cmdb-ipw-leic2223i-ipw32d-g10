@@ -49,13 +49,14 @@ async function getMovie(req, rsp){
 }
 
 async function createUser(req, rsp){
-    const userName = req.body.userName
+    const username = req.body.username
+    const password = req.body.password
     try {
-        const newUser = await cmdbServices.createUser(userName)
+        const newUser = await cmdbServices.createUser(username, password)
         rsp
         .status(201)
         .json({
-            status: `User ${userName} was created`,
+            status: `User ${username} was created`,
             user: newUser
         })
     } catch(e) {
@@ -183,7 +184,6 @@ async function removeMovieInternal(req, rsp) {
 
 function verifyAuthentication(handlerFunction) {
     return function(req, rsp) {
-        //let userToken = '0b115b6e-8fcd-4b66-ac26-33392dcb9340'
         let userToken = req.get("Authorization")
         userToken = userToken ? userToken.split(" ")[1] : null
         if(!userToken) {

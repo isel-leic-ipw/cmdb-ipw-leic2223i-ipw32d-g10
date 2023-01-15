@@ -24,10 +24,9 @@ tags :
       url: https://imdb-api.com/
   - name: groups
     description: Favorite movie groups
-  - name: user
 
 paths:
-  /topMovies:
+  /api/topMovies:
     get:
       tags:
       - topMovies
@@ -71,7 +70,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InvalidRequest'
-  /searchMovie:
+  /api/searchMovie:
     get:
       tags:
       - searchMovie
@@ -127,7 +126,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/InvalidRequest'    
-  /groups:
+  /api/groups:
     get:
       tags:
       - groups
@@ -212,7 +211,7 @@ paths:
                 $ref: '#/components/responses/InvalidRequest'  
         401:
           $ref: '#/components/responses/UnauthorizedError'      
-  /groups/{groupId}:
+  /api/groups/{groupId}:
     delete:
       tags:
       - groups
@@ -423,7 +422,7 @@ paths:
                 $ref: '#/components/responses/InvalidRequest'           
         401:
           $ref: '#/components/responses/UnauthorizedError'  
-  /groups/{groupId}/{movieId}:          
+  /api/groups/{groupId}/{movieId}:          
     delete:
       tags:
       - groups
@@ -486,7 +485,7 @@ paths:
                 $ref: '#/components/responses/InvalidRequest'
         401:
           $ref: '#/components/responses/UnauthorizedError'   
-  /user:
+  /api/user:
     post:
       tags:   
       - user    
@@ -612,21 +611,27 @@ components:
           type: string
     NewUser:
       required:
-        - userName
+        - username
+        - password
       type: object
       properties:
         userName:
-          type: string  
+          type: string 
+        password:
+          type: string    
     User:
       required:
         - id
         - userName
+        - password
         - token
       type: object
       properties:
         id:
           type: string
         userName:
+          type: string
+        password:
           type: string
         token:
           type: string

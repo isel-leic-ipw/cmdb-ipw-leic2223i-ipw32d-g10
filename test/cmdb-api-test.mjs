@@ -137,6 +137,6 @@ it('create group not valid name/description', () => {
         .set('Content-Type', 'application/json')
         .send({userName : "user2"})
         .expect(201)
-        .then(response => expect(response.body.user.userName).equal("user2"))
+        .then(response => expect(response.body.user.username).equal("user2"))
       })
 });

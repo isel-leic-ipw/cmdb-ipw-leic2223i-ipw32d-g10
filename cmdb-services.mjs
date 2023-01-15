@@ -8,6 +8,7 @@ export default function(groupsData, moviesData, mode) {
         throw errors.INVALID_PARAMETER('moviesData')
     }
     return {
+        validateUser: validateUser,
         getTopMovies: getTopMovies,
         getMovie: getMovie,
         createUser: createUser,
@@ -20,6 +21,14 @@ export default function(groupsData, moviesData, mode) {
         removeMovie: removeMovie,
         movieDetails: movieDetails
     }
+
+function validateUser(username, password){
+        return groupsData.getUserByUsername(username)
+                .then(user => {
+                    if(user.password === password) return Promise.resolve({username : user.username , token : user.token})
+                    else return Promise.reject(errors.INVALID_CREDENTIALS())
+                })
+}
 
 async function getTopMovies(limit) {
     checkLimit(limit)
@@ -37,11 +46,11 @@ async function getMovie(movieName, limit){
 }
 
 
-async function createUser(userName){
-    if (checkUndefined(userName)) {
-        throw errors.INVALID_PARAMETER(`userName`)
+async function createUser(username, password){
+    if (checkUndefined(username) || checkUndefined(password)) {
+        throw errors.INVALID_PARAMETER(`username, password`)
     }
-    return groupsData.createUser(userName, mode)
+    return groupsData.createUser(username, password, mode)
 }
 
 
@@ -143,7 +152,7 @@ async function removeMovie(userToken, groupRemove, movieId){
     if(!group) {
         throw errors.GROUP_NOT_FOUND(`${groupRemove}`)
     }
-    const result = await groupsData.removeMovie(group, movieId, groupRemove, mode)
+    const result = await groupsData.removeMovie(group, movieId, mode)
     if(result == false){
         throw errors.INVALID_PARAMETER(`movieId or groupId, the movie was not found in the group`)
     }

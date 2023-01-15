@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto'
 
-const users = [{id: 1, username: 'buser1', token: '0b115b6e-8fcd-4b66-ac26-33392dcb9340'}]
+const users = [{id: 1, username: 'user1', password : "1234", token: '0b115b6e-8fcd-4b66-ac26-33392dcb9340'}]
 const groups = [{userId: 1, groupId: 1, name: 'group1', description: 'group 1 description', movies: [
     {id: 'tt0111161', title: 'The Shawshank Redemption', year: '1994', durationMins: 120}, 
     {id: 'tt0468569', title: 'The Dark Knight', year: '2008', durationMins: 160}]},
@@ -10,11 +10,11 @@ const groups = [{userId: 1, groupId: 1, name: 'group1', description: 'group 1 de
 let userId = users.length + 1
 let groupId = groups.length + 1
 
-export async function createUser(userName){
+export async function createUser(username){
     let userToken = randomUUID()
     const user = {
         id: userId,
-        userName: userName,
+        username: username,
         token: userToken
     }
     users.push(user)

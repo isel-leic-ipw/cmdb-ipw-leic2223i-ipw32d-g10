@@ -5,16 +5,17 @@ const baseURL = "http://localhost:9200/"
 
 //curl -X DELETE http://localhost:9200/base_users
 //curl -X PUT http://localhost:9200/base_users
-//curl -X PUT -d {\"userName\":\"user1\",\"token\":\"0b115b6e-8fcd-4b66-ac26-33392dcb9340\"} -H "Content-Type: application/json" http://localhost:9200/base_users/_doc/1
+//curl -X PUT -d {\"username\":\"user1\",\"password\":\"1234\",\"token\":\"0b115b6e-8fcd-4b66-ac26-33392dcb9340\"} -H "Content-Type: application/json" http://localhost:9200/base_users/_doc/1
 
 //curl -X DELETE http://localhost:9200/base_groups
 //curl -X PUT http://localhost:9200/base_groups
 //curl -X PUT -d "{\"userId\":\"1\",\"name\":\"group2\",\"description\":\"group 2 description\",\"movies\": [] }" -H "Content-Type: application/json" http://localhost:9200/base_groups/_doc/2
 
-function createUser(userName, mode){
+function createUser(username, password, mode){
     let userToken = randomUUID()
         const body = {
-                userName : userName,
+                username : username,
+                password: password,
                 token : userToken
             }
         return fetch(baseURL + `${mode}_users/_doc`, {
@@ -25,7 +26,7 @@ function createUser(userName, mode){
                     "Accept" : "application/json"}
              })
              .then(response => response.json())
-             .then(result => {return {id : result._id, userName : userName, token: userToken}})
+             .then(result => {return {id : result._id, username : username, password: password, token: userToken}})
     }
 
 function getAllGroups(userId, mode){
@@ -183,7 +184,15 @@ function getUser(userToken, mode){
                 headers : {"Accept" : "application/json"}
              })
             .then(response => response.json())
-            .then(body => body.hits.hits.map(t => { return{id : t._id, userName : t._source.userName, token : userToken}})[0])
+            .then(body => body.hits.hits.map(t => { return{id : t._id, username : t._source.username, token : userToken}})[0])
+}  
+
+function getUserByUsername(username){
+    return fetch(baseURL + `base_users/_search?q=username:"${username}"`, {
+            headers : {"Accept" : "application/json"}
+         })
+        .then(response => response.json())
+        .then(body => body.hits.hits.map(t => { return{id : t._id, username : username, password : t._source.password, token : t._source.token}})[0])
 }  
 
 function getGroup(groupId, mode){
@@ -217,6 +226,7 @@ export const data = {
         addMovie,
         removeMovie,
         getUser,
+        getUserByUsername,
         getGroup
 }
 
